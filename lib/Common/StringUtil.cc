@@ -1,4 +1,4 @@
-#include "SummerDB/Common/StringUtil.h"
+#include "SummerDB/Common/StringUtil.hpp"
 
 #include <algorithm>
 #include <iomanip>
