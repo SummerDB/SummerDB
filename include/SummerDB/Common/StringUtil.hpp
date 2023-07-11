@@ -1,5 +1,5 @@
-#ifndef SUMMERDB_COMMON_STRING_UTIL_H
-#define SUMMERDB_COMMON_STRING_UTIL_H
+#ifndef SUMMERDB_COMMON_STRING_UTIL_HPP
+#define SUMMERDB_COMMON_STRING_UTIL_HPP
 
 #include <string>
 #include <vector>
@@ -128,4 +128,4 @@ class StringUtil {
 };
 }  // namespace SummerDB
 
-#endif  // SUMMERDB_COMMON_STRING_UTIL_H
+#endif  // SUMMERDB_COMMON_STRING_UTIL_HPP
