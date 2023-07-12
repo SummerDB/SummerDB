@@ -2,11 +2,19 @@
 
 namespace SummerDB {
 
-ColumnDefinition::ColumnDefinition(std::string name, TypeId type)
-    : name(name), type(type), has_default(false) {}
+ColumnCatalogEntry::ColumnCatalogEntry(std::string name, TypeId type,
+                                       bool is_not_null)
+    : AbstractCatalogEntry(nullptr, name),
+      type(type),
+      is_not_null(is_not_null),
+      has_default(false) {}
 
-ColumnDefinition::ColumnDefinition(std::string name, TypeId type,
-                                   Value default_value)
-    : name(name), type(type), has_default(true), default_value(default_value) {}
+ColumnCatalogEntry::ColumnCatalogEntry(std::string name, TypeId type,
+                                       bool is_not_null, Value default_value)
+    : AbstractCatalogEntry(nullptr, name),
+      type(type),
+      is_not_null(is_not_null),
+      has_default(true),
+      default_value(default_value) {}
 
 }  // namespace SummerDB
