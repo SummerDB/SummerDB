@@ -24,8 +24,8 @@ class SQLNodeVisitor {
   virtual void Visit(InsertStatement&) {}
 
   virtual void Visit(AggregateExpression& expr);
-	virtual void Visit(TableRefExpression &expr);
-	virtual void Visit(BaseTableRefExpression &expr);
+  virtual void Visit(TableRefExpression& expr);
+  virtual void Visit(BaseTableRefExpression& expr);
 };
 
 }  // namespace SummerDB
