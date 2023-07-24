@@ -8,6 +8,8 @@ class CreateStatement;
 class InsertStatement;
 
 class AggregateExpression;
+class TableRefExpression;
+class BaseTableRefExpression;
 
 //! The SQLNodeVisitor is an abstract base class that implements the Visitor
 //! pattern on AbstractExpression and SQLStatement. It will visit nodes
@@ -22,6 +24,8 @@ class SQLNodeVisitor {
   virtual void Visit(InsertStatement&) {}
 
   virtual void Visit(AggregateExpression& expr);
+	virtual void Visit(TableRefExpression &expr);
+	virtual void Visit(BaseTableRefExpression &expr);
 };
 
 }  // namespace SummerDB
