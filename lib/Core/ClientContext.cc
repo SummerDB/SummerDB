@@ -4,7 +4,7 @@
 
 namespace SummerDB {
 
-ClientContext::ClientContext(SummerDB& database)
+ClientContext::ClientContext(SummerDatabase& database)
     : db(database), transaction(database.transaction_manager) {}
 
 }  // namespace SummerDB

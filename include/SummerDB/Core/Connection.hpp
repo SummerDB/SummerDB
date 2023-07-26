@@ -6,13 +6,13 @@
 
 namespace SummerDB {
 
-class SummerDB;
+class SummerDatabase;
 
 //! A connection to a database. This represents a (client) connection that can
 //! be used to query the database.
 class SummerDBConnection {
  public:
-  SummerDBConnection(SummerDB& database);
+  SummerDBConnection(SummerDatabase& database);
   ~SummerDBConnection();
 
   std::string GetProfilingInformation() { return context.profiler.ToString(); }
@@ -27,7 +27,7 @@ class SummerDBConnection {
   //! Queries the database using the transaction context of this connection
   std::unique_ptr<SummerDBResult> Query(std::string query);
 
-  SummerDB& db;
+  SummerDatabase& db;
   ClientContext context;
 
  private:

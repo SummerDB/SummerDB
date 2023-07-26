@@ -28,7 +28,7 @@ static bool ReadEntry(WALEntry& entry, FILE* wal_file) {
 //===--------------------------------------------------------------------===//
 // Replay & Initialize Log
 //===--------------------------------------------------------------------===//
-static bool ReplayEntry(ClientContext& context, SummerDB& database,
+static bool ReplayEntry(ClientContext& context, SummerDatabase& database,
                         WALEntry entry, Deserializer& source);
 
 void WriteAheadLog::Replay(std::string& path) {
@@ -105,7 +105,7 @@ bool ReplayInsert(ClientContext& context, Catalog& catalog,
                   Deserializer& source);
 bool ReplayQuery(ClientContext& context, Deserializer& source);
 
-bool ReplayEntry(ClientContext& context, SummerDB& database, WALEntry entry,
+bool ReplayEntry(ClientContext& context, SummerDatabase& database, WALEntry entry,
                  Deserializer& source) {
   switch (entry.type) {
     case WALEntry::DROP_TABLE:

@@ -9,10 +9,10 @@ namespace SummerDB {
 
 //! The database object. This object holds the catalog and all the
 //! database-specific meta information.
-class SummerDB {
+class SummerDatabase {
  public:
-  SummerDB(const char* path = nullptr);
-  SummerDB(const std::string& path) : SummerDB(path.c_str()) {}
+  SummerDatabase(const char* path = nullptr);
+  SummerDatabase(const std::string& path) : SummerDatabase(path.c_str()) {}
 
   StorageManager storage;
   Catalog catalog;

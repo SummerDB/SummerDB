@@ -2,7 +2,7 @@
 
 namespace SummerDB {
 
-SummerDB::SummerDB(const char* path)
+SummerDatabase::SummerDatabase(const char* path)
     : storage(*this, path ? std::string(path) : std::string()),
       catalog(storage),
       transaction_manager(storage) {

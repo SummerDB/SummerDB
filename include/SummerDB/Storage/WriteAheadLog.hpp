@@ -10,7 +10,7 @@
 namespace SummerDB {
 
 class Catalog;
-class SummerDB;
+class SummerDatabase;
 class SchemaCatalogEntry;
 class TableCatalogEntry;
 class Transaction;
@@ -51,7 +51,7 @@ struct WALEntryData {
 //! server crashes or is shut down.
 class WriteAheadLog {
  public:
-  WriteAheadLog(SummerDB& database)
+  WriteAheadLog(SummerDatabase& database)
       : initialized(false), database(database), wal_file(nullptr) {}
   ~WriteAheadLog();
 
@@ -82,7 +82,7 @@ class WriteAheadLog {
 
   bool initialized;
 
-  SummerDB& database;
+  SummerDatabase& database;
   FILE* wal_file;
 };
 

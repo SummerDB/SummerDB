@@ -9,7 +9,7 @@
 
 namespace SummerDB {
 
-SummerDBConnection::SummerDBConnection(SummerDB& database)
+SummerDBConnection::SummerDBConnection(SummerDatabase& database)
     : db(database), context(database) {}
 
 SummerDBConnection::~SummerDBConnection() {}

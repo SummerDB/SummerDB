@@ -8,7 +8,7 @@
 
 namespace SummerDB {
 
-StorageManager::StorageManager(SummerDB& database, std::string path)
+StorageManager::StorageManager(SummerDatabase& database, std::string path)
     : path(path), database(database), wal(database) {}
 
 void StorageManager::Initialize() {
