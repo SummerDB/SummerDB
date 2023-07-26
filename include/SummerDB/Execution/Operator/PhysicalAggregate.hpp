@@ -10,21 +10,21 @@ namespace SummerDB {
 class PhysicalAggregate : public PhysicalOperator {
  public:
   PhysicalAggregate(
-      std::vector<std::unique_ptr<AbstractExpression>> select_list,
+      std::vector<std::unique_ptr<Expression>> select_list,
       PhysicalOperatorType type = PhysicalOperatorType::BASE_GROUP_BY);
   PhysicalAggregate(
-      std::vector<std::unique_ptr<AbstractExpression>> select_list,
-      std::vector<std::unique_ptr<AbstractExpression>> groups,
+      std::vector<std::unique_ptr<Expression>> select_list,
+      std::vector<std::unique_ptr<Expression>> groups,
       PhysicalOperatorType type = PhysicalOperatorType::BASE_GROUP_BY);
 
   void Initialize();
 
-  void InitializeChunk(DataChunk& chunk) override;
+  std::vector<TypeId> GetTypes() override;
 
   //! The projection list of the SELECT statement (that contains aggregates)
-  std::vector<std::unique_ptr<AbstractExpression>> select_list;
+  std::vector<std::unique_ptr<Expression>> select_list;
   //! The groups
-  std::vector<std::unique_ptr<AbstractExpression>> groups;
+  std::vector<std::unique_ptr<Expression>> groups;
   //! The actual aggregates that have to be computed (i.e. the deepest
   //! aggregates in the expression)
   std::vector<AggregateExpression*> aggregates;
@@ -34,7 +34,8 @@ class PhysicalAggregate : public PhysicalOperator {
 class PhysicalAggregateOperatorState : public PhysicalOperatorState {
  public:
   PhysicalAggregateOperatorState(PhysicalAggregate* parent,
-                                 PhysicalOperator* child = nullptr);
+                                 PhysicalOperator* child = nullptr,
+                                 ExpressionExecutor* parent_executor = nullptr);
 
   //! Aggregate values, used only for aggregates without GROUP BY
   std::vector<Value> aggregates;

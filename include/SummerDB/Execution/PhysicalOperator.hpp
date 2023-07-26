@@ -7,11 +7,13 @@
 #include "SummerDB/Common/InternalTypes.hpp"
 #include "SummerDB/Common/Printable.hpp"
 #include "SummerDB/Common/Types/DataChunk.hpp"
-#include "SummerDB/Parser/Expression/AbstractExpression.hpp"
+#include "SummerDB/Parser/Expression.hpp"
 #include "SummerDB/Parser/Statement/SelectStatement.hpp"
 
 namespace SummerDB {
 
+class ClientContext;
+class ExpressionExecutor;
 class PhysicalOperator;
 
 //! The current state/context of the operator. The PhysicalOperatorState is
@@ -20,7 +22,7 @@ class PhysicalOperator;
 //! data source is exhausted.
 class PhysicalOperatorState {
  public:
-  PhysicalOperatorState(PhysicalOperator* child);
+  PhysicalOperatorState(PhysicalOperator* child, ExpressionExecutor* parent);
   virtual ~PhysicalOperatorState() {}
 
   //! Flag indicating whether or not the operator is finished [note: not all
@@ -30,6 +32,8 @@ class PhysicalOperatorState {
   DataChunk child_chunk;
   //! State of the child of this operator
   std::unique_ptr<PhysicalOperatorState> child_state;
+
+  ExpressionExecutor* parent;
 };
 
 //! PhysicalOperator is the base class of the physical operators present in the
@@ -49,16 +53,26 @@ class PhysicalOperator : public Printable {
 
   virtual std::string ToString() const override;
 
+  //! Return a vector of the types that will be returned by this operator
+  virtual std::vector<TypeId> GetTypes() = 0;
   //! Initialize a given chunk to the types that will be returned by this
   //! operator, this will prepare chunk for a call to GetChunk. This method
   //! only has to be called once for any amount of calls to GetChunk.
-  virtual void InitializeChunk(DataChunk& chunk) = 0;
+  virtual void InitializeChunk(DataChunk& chunk) {
+    auto types = GetTypes();
+    chunk.Initialize(types);
+  }
   //! Retrieves a chunk from this operator and stores it in the chunk
   //! variable.
-  virtual void GetChunk(DataChunk& chunk, PhysicalOperatorState* state) = 0;
+  virtual void _GetChunk(ClientContext& context, DataChunk& chunk,
+                         PhysicalOperatorState* state) = 0;
+
+  void GetChunk(ClientContext& context, DataChunk& chunk,
+                PhysicalOperatorState* state);
 
   //! Create a new empty instance of the operator state
-  virtual std::unique_ptr<PhysicalOperatorState> GetOperatorState() = 0;
+  virtual std::unique_ptr<PhysicalOperatorState> GetOperatorState(
+      ExpressionExecutor* executor) = 0;
 
   //! The physical operator type
   PhysicalOperatorType type;
