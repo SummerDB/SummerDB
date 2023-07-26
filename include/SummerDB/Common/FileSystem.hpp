@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace SumemrDB {
+namespace SummerDB {
 
 //! Check if a directory exists
 bool DirectoryExists(const std::string& directory);

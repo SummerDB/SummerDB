@@ -14,7 +14,7 @@ set(project_version "${${PROJECT_NAME}_VERSION}")
 
 message(STATUS "Project '${PROJECT_NAME}', version: '${project_version}'")
 
-option(SUMMERDB_OPT_BUILD_UNITTESTS "Build all SummerDB unittests" ON)
+option(SUMMERDB_OPT_BUILD_TESTS "Build all SummerDB tests" ON)
 option(SUMMERDB_OPT_BUILD_BENCHMARKS "Build all SummerDB benchmarks" ON)
 option(SUMMERDB_OPT_BUILD_TOOLS "Build SummerDB execute tools" ON)
 option(SUMMERDB_OPT_BUILD_EXPERIMENTAL "Build SummerDB experimental implementation" ON)
@@ -46,6 +46,6 @@ list(APPEND SummerDB_SRCS ${LIB_PATH})
 add_library(${STATIC_LIB_NAME} STATIC ${SummerDB_SRCS})
 target_link_libraries(${STATIC_LIB_NAME})
 
-if (SUMMERDB_OPT_BUILD_UNITTESTS)
-  add_subdirectory(unittests #[[EXCLUDE_FROM_ALL]])
+if (SUMMERDB_OPT_BUILD_TESTS)
+  add_subdirectory(tests #[[EXCLUDE_FROM_ALL]])
 endif()

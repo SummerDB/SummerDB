@@ -28,14 +28,14 @@ void StorageManager::Initialize() {
 
 void StorageManager::LoadDatabase(std::string& path) {
   // first check if the database exists
-  auto wal_path = SumemrDB::JoinPath(path, WAL_FILE);
-  if (!SumemrDB::DirectoryExists(path)) {
+  auto wal_path = JoinPath(path, WAL_FILE);
+  if (!DirectoryExists(path)) {
     // have to create the directory
-    SumemrDB::CreateDirectory(path);
+    CreateDirectory(path);
   } else {
     // directory already exists
     // verify that it is an existing database
-    if (!SumemrDB::FileExists(wal_path)) {
+    if (!FileExists(wal_path)) {
       throw IOException(
           "Database directory exists, but could not find WAL file!");
     }
