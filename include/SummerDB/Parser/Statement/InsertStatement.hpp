@@ -1,10 +1,8 @@
 #ifndef SUMMERDB_PARSER_STATEMENT_INSERT_STATEMENT_HPP
 #define SUMMERDB_PARSER_STATEMENT_INSERT_STATEMENT_HPP
 
-#include "SummerDB/Catalog/Catalog.hpp"
-#include "SummerDB/Parser/Expression/AbstractExpression.hpp"
-#include "SummerDB/Parser/Expression/BaseTableRefExpression.hpp"
-#include "SummerDB/Parser/Statement/SqlStatement.hpp"
+#include "SummerDB/Parser/Expression.hpp"
+#include "SummerDB/Parser/Statement/SelectStatement.hpp"
 
 namespace SummerDB {
 
@@ -15,8 +13,14 @@ class InsertStatement : public SQLStatement {
   virtual std::string ToString() const;
   virtual void Accept(SQLNodeVisitor* v) { v->Visit(*this); }
 
+  //! The select statement to insert from
+  std::unique_ptr<SelectStatement> select_statement;
+
   //! List of values to insert
-  std::vector<std::unique_ptr<AbstractExpression>> values;
+  std::vector<std::vector<std::unique_ptr<Expression>>> values;
+
+  //! Column names to insert into
+  std::vector<std::string> columns;
 
   //! Table name to insert to
   std::string table;

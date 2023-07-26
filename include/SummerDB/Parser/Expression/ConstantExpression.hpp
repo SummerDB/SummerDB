@@ -2,30 +2,38 @@
 #define SUMMERDB_PARSER_EXPRESSION_CONSTANT_EXPRESSION_HPP
 
 #include "SummerDB/Common/Types/Value.hpp"
-#include "SummerDB/Parser/Expression/AbstractExpression.hpp"
+#include "SummerDB/Parser/Expression.hpp"
 
 namespace SummerDB {
 
 //! Represents a constant value in the query
-class ConstantExpression : public AbstractExpression {
+class ConstantExpression : public Expression {
  public:
   ConstantExpression()
-      : AbstractExpression(ExpressionType::VALUE_CONSTANT), value() {}
-  ConstantExpression(std::string val)
-      : AbstractExpression(ExpressionType::VALUE_CONSTANT, TypeId::VARCHAR),
-        value(val) {}
-  ConstantExpression(int32_t val)
-      : AbstractExpression(ExpressionType::VALUE_CONSTANT, TypeId::INTEGER),
-        value(val) {}
-  ConstantExpression(double val)
-      : AbstractExpression(ExpressionType::VALUE_CONSTANT, TypeId::DECIMAL),
-        value(val) {}
-  ConstantExpression(const Value& val)
-      : AbstractExpression(ExpressionType::VALUE_CONSTANT, val.type),
-        value(val) {}
+      : Expression(ExpressionType::VALUE_CONSTANT, TypeId::INTEGER), value() {}
+  ConstantExpression(Value val)
+      : Expression(ExpressionType::VALUE_CONSTANT, val.type), value(val) {}
 
   virtual void Accept(SQLNodeVisitor* v) override { v->Visit(*this); }
-  virtual std::string ToString() const override { return std::string(); }
+
+  //! Resolve the type of the constant
+  virtual void ResolveType() override {
+    Expression::ResolveType();
+    stats = Statistics(value);
+  }
+
+  virtual bool Equals(const Expression* other_) override {
+    if (!Expression::Equals(other_)) {
+      return false;
+    }
+    auto other = reinterpret_cast<const ConstantExpression*>(other_);
+    if (!other) {
+      return false;
+    }
+    return Value::Equals(value, other->value);
+  }
+
+  virtual std::string ToString() const override { return value.ToString(); }
 
   //! The constant value referenced
   Value value;

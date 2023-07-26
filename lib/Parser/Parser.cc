@@ -2,12 +2,13 @@
 
 #include <stdio.h>
 
-#include "SummerDB/Parser/Postgres/pg_list.h"
-#include "SummerDB/Parser/Postgres/pg_query.h"
-#include "SummerDB/Parser/Postgres/pg_trigger.h"
 #include "SummerDB/Parser/Transform.hpp"
 
 namespace SummerDB {
+
+using namespace postgres;
+
+Parser::Parser() : success(false) {}
 
 bool Parser::ParseQuery(const char* query) {
   // first we use the postgres parser to parse the query
@@ -30,7 +31,7 @@ bool Parser::ParseQuery(const char* query) {
       goto wrapup;
     }
     this->success = true;
-  } catch (Exception ex) {
+  } catch (Exception& ex) {
     this->message = ex.GetMessage();
   } catch (...) {
     this->message = "UNHANDLED EXCEPTION TYPE THROWN IN PARSER!";
@@ -59,8 +60,23 @@ std::unique_ptr<SQLStatement> Parser::TransformNode(Node* stmt) {
       return TransformSelect(stmt);
     case T_CreateStmt:
       return TransformCreate(stmt);
+    case T_DropStmt:
+      return TransformDrop(stmt);
     case T_InsertStmt:
       return TransformInsert(stmt);
+    case T_CopyStmt:
+      return TransformCopy(stmt);
+    case T_TransactionStmt:
+      return TransformTransaction(stmt);
+    case T_DeleteStmt:
+      return TransformDelete(stmt);
+    case T_UpdateStmt:
+      return TransformUpdate(stmt);
+    case T_ExplainStmt: {
+      ExplainStmt* explain_stmt = reinterpret_cast<ExplainStmt*>(stmt);
+      return std::make_unique<ExplainStatement>(
+          TransformNode(explain_stmt->query));
+    }
     default:
       throw NotImplementedException("A_Expr not implemented!");
   }

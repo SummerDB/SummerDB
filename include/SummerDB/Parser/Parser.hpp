@@ -4,10 +4,12 @@
 #include <string>
 #include <vector>
 
-#include "SummerDB/Parser/Statement/SqlStatement.hpp"
+#include "SummerDB/Parser/SqlStatement.hpp"
 
+namespace postgres {
 struct Node;
 struct List;
+}  // namespace postgres
 
 namespace SummerDB {
 
@@ -16,7 +18,7 @@ namespace SummerDB {
 //! plan and executed.
 class Parser {
  public:
-  Parser() = default;
+  Parser();
 
   //! Attempts to parse a query into a series of SQL statements. Returns
   //! whether or not the parsing was successful. If the parsing was
@@ -38,9 +40,9 @@ class Parser {
 
  private:
   //! Transform a Postgres parse tree into a set of SQL Statements
-  bool TransformList(List* tree);
+  bool TransformList(postgres::List* tree);
   //! Transform a single Postgres parse node into a SQL Statement.
-  std::unique_ptr<SQLStatement> TransformNode(Node* stmt);
+  std::unique_ptr<SQLStatement> TransformNode(postgres::Node* stmt);
 };
 
 }  // namespace SummerDB
