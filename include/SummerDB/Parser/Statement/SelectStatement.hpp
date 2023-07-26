@@ -3,27 +3,28 @@
 
 #include <vector>
 
-#include "SummerDB/Parser/Expression/AbstractExpression.hpp"
-#include "SummerDB/Parser/Statement/SqlStatement.hpp"
+#include "SummerDB/Parser/Expression.hpp"
+#include "SummerDB/Parser/SqlStatement.hpp"
+#include "SummerDB/Parser/Tableref/TableRef.hpp"
 
 namespace SummerDB {
 
 //! GROUP BY description
 struct GroupByDescription {
   //! List of groups
-  std::vector<std::unique_ptr<AbstractExpression>> groups;
+  std::vector<std::unique_ptr<Expression>> groups;
   //! HAVING clause
-  std::unique_ptr<AbstractExpression> having;
+  std::unique_ptr<Expression> having;
 };
 //! Single node in ORDER BY statement
 struct OrderByNode {
   //! Sort order, ASC or DESC
   OrderType type;
   //! Expression to order by
-  std::unique_ptr<AbstractExpression> expression;
+  std::unique_ptr<Expression> expression;
 
   OrderByNode() {}
-  OrderByNode(OrderType type, std::unique_ptr<AbstractExpression> expression)
+  OrderByNode(OrderType type, std::unique_ptr<Expression> expression)
       : type(type), expression(std::move(expression)) {}
 };
 //! ORDER BY description
@@ -44,19 +45,19 @@ class SelectStatement : public SQLStatement {
  public:
   SelectStatement()
       : SQLStatement(StatementType::SELECT),
-        union_select(nullptr),
-        select_distinct(false){};
+        select_distinct(false),
+        union_select(nullptr){};
   virtual ~SelectStatement() {}
 
   virtual std::string ToString() const;
   virtual void Accept(SQLNodeVisitor* v) { v->Visit(*this); }
 
   //! The projection list
-  std::vector<std::unique_ptr<AbstractExpression>> select_list;
+  std::vector<std::unique_ptr<Expression>> select_list;
   //! The FROM clause
-  std::unique_ptr<AbstractExpression> from_table;
+  std::unique_ptr<TableRef> from_table;
   //! The WHERE clause
-  std::unique_ptr<AbstractExpression> where_clause;
+  std::unique_ptr<Expression> where_clause;
   //! DISTINCT or not
   bool select_distinct;
 
@@ -79,6 +80,7 @@ class SelectStatement : public SQLStatement {
   bool HasAggregation();
 
   std::unique_ptr<SelectStatement> union_select;
+  std::unique_ptr<SelectStatement> except_select;
 };
 
 }  // namespace SummerDB

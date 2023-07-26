@@ -1,8 +1,8 @@
 #ifndef SUMMERDB_EXECUTION_EXECUTOR_HPP
 #define SUMMERDB_EXECUTION_EXECUTOR_HPP
 
+#include "SummerDB/Common/Types/ChunkCollection.hpp"
 #include "SummerDB/Execution/PhysicalOperator.hpp"
-#include "SummerDB/SummerDB.hpp"
 
 namespace SummerDB {
 
@@ -11,7 +11,8 @@ namespace SummerDB {
 class Executor {
  public:
   //! Execute the specified physical operator plan
-  std::unique_ptr<SummerDBResult> Execute(std::unique_ptr<PhysicalOperator> op);
+  ChunkCollection Execute(ClientContext& context,
+                          std::unique_ptr<PhysicalOperator> op);
 };
 
 }  // namespace SummerDB

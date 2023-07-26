@@ -5,8 +5,7 @@ namespace SummerDB {
 // Split a set of predicates separate by AND statements
 // These are the predicates that are safe to push down because all of them MUST
 // be true
-void LogicalFilter::SplitPredicates(
-    std::unique_ptr<AbstractExpression> expression) {
+void LogicalFilter::SplitPredicates(std::unique_ptr<Expression> expression) {
   if (expression->GetExpressionType() == ExpressionType::CONJUNCTION_AND) {
     // Traverse down the expression tree along conjunction
     for (auto& child : expression->children) {
@@ -18,9 +17,11 @@ void LogicalFilter::SplitPredicates(
   }
 }
 
-LogicalFilter::LogicalFilter(std::unique_ptr<AbstractExpression> expression)
+LogicalFilter::LogicalFilter(std::unique_ptr<Expression> expression)
     : LogicalOperator(LogicalOperatorType::FILTER) {
   SplitPredicates(std::move(expression));
 }
+
+LogicalFilter::LogicalFilter() : LogicalOperator(LogicalOperatorType::FILTER) {}
 
 }  // namespace SummerDB

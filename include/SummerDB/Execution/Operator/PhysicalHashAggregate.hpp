@@ -11,26 +11,27 @@ namespace SummerDB {
 //! a hash table to perform the grouping
 class PhysicalHashAggregate : public PhysicalAggregate {
  public:
-  PhysicalHashAggregate(
-      std::vector<std::unique_ptr<AbstractExpression>> expressions);
-  PhysicalHashAggregate(
-      std::vector<std::unique_ptr<AbstractExpression>> expressions,
-      std::vector<std::unique_ptr<AbstractExpression>> groups);
+  PhysicalHashAggregate(std::vector<std::unique_ptr<Expression>> expressions);
+  PhysicalHashAggregate(std::vector<std::unique_ptr<Expression>> expressions,
+                        std::vector<std::unique_ptr<Expression>> groups);
 
   void Initialize();
 
-  void InitializeChunk(DataChunk& chunk) override;
-  void GetChunk(DataChunk& chunk, PhysicalOperatorState* state) override;
+  void _GetChunk(ClientContext& context, DataChunk& chunk,
+                 PhysicalOperatorState* state) override;
 
-  std::unique_ptr<PhysicalOperatorState> GetOperatorState() override;
+  std::unique_ptr<PhysicalOperatorState> GetOperatorState(
+      ExpressionExecutor* parent) override;
 };
 
 class PhysicalHashAggregateOperatorState
     : public PhysicalAggregateOperatorState {
  public:
   PhysicalHashAggregateOperatorState(PhysicalAggregate* parent,
-                                     PhysicalOperator* child)
-      : PhysicalAggregateOperatorState(parent, child), ht_scan_position(0) {}
+                                     PhysicalOperator* child,
+                                     ExpressionExecutor* parent_executor)
+      : PhysicalAggregateOperatorState(parent, child, parent_executor),
+        ht_scan_position(0) {}
 
   //! The current position to scan the HT for output tuples
   size_t ht_scan_position;

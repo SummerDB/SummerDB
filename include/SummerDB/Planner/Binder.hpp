@@ -6,10 +6,12 @@
 
 #include "SummerDB/Catalog/Catalog.hpp"
 #include "SummerDB/Parser/SqlNodeVisitor.hpp"
-#include "SummerDB/Parser/Statement/SqlStatement.hpp"
+#include "SummerDB/Parser/SqlStatement.hpp"
 #include "SummerDB/Planner/BindContext.hpp"
 
 namespace SummerDB {
+
+class ClientContext;
 
 //! Bind the parsed query tree to the actual columns present in the catalog.
 /*!
@@ -19,20 +21,30 @@ namespace SummerDB {
 */
 class Binder : public SQLNodeVisitor {
  public:
-  Binder(Catalog& catalog) : catalog(catalog) {}
+  Binder(ClientContext& context)
+      : bind_context(make_unique<BindContext>()), context(context) {}
 
   void Visit(SelectStatement& statement);
+  void Visit(InsertStatement& stmt);
+  void Visit(CopyStatement& stmt);
+  void Visit(DeleteStatement& stmt);
+  void Visit(UpdateStatement& stmt);
+  void Visit(CreateTableStatement& stmt);
 
-  void Visit(BaseTableRefExpression& expr);
+  void Visit(CheckConstraint& constraint);
+
   void Visit(ColumnRefExpression& expr);
-  void Visit(JoinExpression& expr);
   void Visit(SubqueryExpression& expr);
 
+  void Visit(BaseTableRef& expr);
+  void Visit(CrossProductRef& expr);
+  void Visit(JoinRef& expr);
+  void Visit(SubqueryRef& expr);
   //! The BindContext created and used by the Binder.
-  std::unique_ptr<BindContext> context;
+  std::unique_ptr<BindContext> bind_context;
 
  private:
-  Catalog& catalog;
+  ClientContext& context;
 };
 
 }  // namespace SummerDB

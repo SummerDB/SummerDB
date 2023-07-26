@@ -36,7 +36,7 @@ include_directories(include)
 # Create the SummerDB C++ library
 set(SummerDB_SRCS)
 
-set(STATIC_LIB_NAME "summer")
+set(STATIC_LIB_NAME "summerdb")
 
 file(GLOB_RECURSE LIB_PATH
     ./lib/*/*.cc

@@ -8,20 +8,25 @@ namespace SummerDB {
 //! Physically insert a set of data into a table
 class PhysicalInsert : public PhysicalOperator {
  public:
-  PhysicalInsert(std::shared_ptr<TableCatalogEntry> table,
-                 std::vector<std::unique_ptr<AbstractExpression>> value_list)
+  PhysicalInsert(
+      TableCatalogEntry* table,
+      std::vector<std::vector<std::unique_ptr<Expression>>> insert_values,
+      std::vector<int> column_index_map)
       : PhysicalOperator(PhysicalOperatorType::INSERT),
-        value_list(move(value_list)),
+        column_index_map(column_index_map),
+        insert_values(std::move(insert_values)),
         table(table) {}
 
-  virtual void InitializeChunk(DataChunk& chunk) override;
-  virtual void GetChunk(DataChunk& chunk,
-                        PhysicalOperatorState* state) override;
+  std::vector<TypeId> GetTypes() override;
+  virtual void _GetChunk(ClientContext& context, DataChunk& chunk,
+                         PhysicalOperatorState* state) override;
 
-  virtual std::unique_ptr<PhysicalOperatorState> GetOperatorState() override;
+  virtual std::unique_ptr<PhysicalOperatorState> GetOperatorState(
+      ExpressionExecutor* parent_executor) override;
 
-  std::vector<std::unique_ptr<AbstractExpression>> value_list;
-  std::shared_ptr<TableCatalogEntry> table;
+  std::vector<int> column_index_map;
+  std::vector<std::vector<std::unique_ptr<Expression>>> insert_values;
+  TableCatalogEntry* table;
 };
 
 }  // namespace SummerDB

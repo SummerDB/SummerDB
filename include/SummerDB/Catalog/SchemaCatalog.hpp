@@ -5,35 +5,34 @@
 #include <unordered_map>
 
 #include "SummerDB/Catalog/AbstractCatalog.hpp"
+#include "SummerDB/Catalog/CatalogSet.hpp"
 #include "SummerDB/Catalog/TableCatalog.hpp"
+#include "SummerDB/Transaction/Transaction.hpp"
 
 namespace SummerDB {
 
 class Catalog;
+class Constraint;
 
 //! A schema in the catalog
 class SchemaCatalogEntry : public AbstractCatalogEntry {
-  friend class Catalog;
-
  public:
   SchemaCatalogEntry(Catalog* catalog, std::string name);
 
   //! Returns true if a table with the given name exists in the schema
-  bool TableExists(const std::string& table_name);
-  //! Returns a reference to a table of the given name. Throws an exception if
+  bool TableExists(Transaction& transaction, const std::string& table_name);
+  //! Returns a pointer to a table of the given name. Throws an exception if
   //! the table does not exist.
-  std::shared_ptr<TableCatalogEntry> GetTable(const std::string& table);
+  TableCatalogEntry* GetTable(Transaction& transaction,
+                              const std::string& table);
+  //! Creates a table with the given name in the schema
+  void CreateTable(Transaction& transaction, CreateTableInformation* info);
 
-  //! The set of tables contained in the schema
-  std::unordered_map<std::string, std::shared_ptr<TableCatalogEntry>> tables;
-
-  virtual std::string ToString() const { return std::string(); }
+  void DropTable(Transaction& transaction, const std::string& table_name);
 
  private:
-  //! Creates a table with the given name and the given set of columns in the
-  //! schema.
-  void CreateTable(const std::string& table_name,
-                   const std::vector<ColumnCatalogEntry>& columns);
+  //! The catalog set holding the tables
+  CatalogSet tables;
 };
 
 }  // namespace SummerDB

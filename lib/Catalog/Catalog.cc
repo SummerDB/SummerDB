@@ -5,57 +5,61 @@
 
 namespace SummerDB {
 
-Catalog::Catalog()
-    : AbstractCatalogEntry(nullptr, "catalog"),
-      storage_manager(std::make_unique<StorageManager>()) {}
+Catalog::Catalog(StorageManager& storage) : storage(storage) {}
 
-Catalog::~Catalog() {}
-
-void Catalog::CreateSchema(const std::string& schema_name) {
-  if (SchemaExists(schema_name)) {
+void Catalog::CreateSchema(Transaction& transaction,
+                           const std::string& schema_name) {
+  auto entry = make_unique_base<AbstractCatalogEntry, SchemaCatalogEntry>(
+      this, schema_name);
+  if (!schemas.CreateEntry(transaction, schema_name, std::move(entry))) {
     throw CatalogException("Schema with name %s already exists!",
                            schema_name.c_str());
   }
-  schemas[schema_name] =
-      std::make_shared<SchemaCatalogEntry>(this, schema_name);
 }
 
-void Catalog::CreateTable(const std::string& schema_name,
-                          const std::string& table_name,
-                          const std::vector<ColumnCatalogEntry>& columns) {
-  if (!SchemaExists(schema_name)) {
+bool Catalog::SchemaExists(Transaction& transaction, const std::string& name) {
+  return schemas.EntryExists(transaction, name);
+}
+
+SchemaCatalogEntry* Catalog::GetSchema(Transaction& transaction,
+                                       const std::string& schema_name) {
+  auto entry = schemas.GetEntry(transaction, schema_name);
+  if (!entry) {
     throw CatalogException("Schema with name %s does not exist!",
                            schema_name.c_str());
   }
-  auto schema = GetSchema(schema_name);
-  schema->CreateTable(table_name, columns);
+  return (SchemaCatalogEntry*)entry;
 }
 
-bool Catalog::SchemaExists(const std::string& name) {
-  return schemas.find(name) != schemas.end();
-}
-
-bool Catalog::TableExists(const std::string& schema_name,
+bool Catalog::TableExists(Transaction& transaction,
+                          const std::string& schema_name,
                           const std::string& table_name) {
-  if (!SchemaExists(schema_name)) {
+  auto entry = schemas.GetEntry(transaction, schema_name);
+  if (!entry) {
     return false;
   }
-  auto schema = GetSchema(schema_name);
-  return schema->TableExists(table_name);
+  SchemaCatalogEntry* schema = (SchemaCatalogEntry*)entry;
+  return schema->TableExists(transaction, table_name);
 }
 
-std::shared_ptr<SchemaCatalogEntry> Catalog::GetSchema(
-    const std::string& name) {
-  if (!SchemaExists(name)) {
-    throw CatalogException("Schema with name %s does not exist!", name.c_str());
-  }
-  return schemas[name];
+void Catalog::CreateTable(Transaction& transaction,
+                          CreateTableInformation* info) {
+  auto schema = GetSchema(transaction, info->schema);
+  schema->CreateTable(transaction, info);
 }
 
-std::shared_ptr<TableCatalogEntry> Catalog::GetTable(
-    const std::string& schema_name, const std::string& table_name) {
-  auto schema = GetSchema(schema_name);
-  return schema->GetTable(table_name);
+void Catalog::DropTable(Transaction& transaction,
+                        const std::string& schema_name,
+                        const std::string& table_name) {
+  auto schema = GetSchema(transaction, schema_name);
+  schema->DropTable(transaction, table_name);
+}
+
+TableCatalogEntry* Catalog::GetTable(Transaction& transaction,
+                                     const std::string& schema_name,
+                                     const std::string& table_name) {
+  auto schema = GetSchema(transaction, schema_name);
+  return schema->GetTable(transaction, table_name);
 }
 
 }  // namespace SummerDB

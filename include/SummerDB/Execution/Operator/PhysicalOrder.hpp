@@ -1,6 +1,7 @@
 #ifndef SUMMERDB_EXECUTION_OPERATOR_PHYSICAL_ORDER_HPP
 #define SUMMERDB_EXECUTION_OPERATOR_PHYSICAL_ORDER_HPP
 
+#include "SummerDB/Common/Types/ChunkCollection.hpp"
 #include "SummerDB/Execution/PhysicalOperator.hpp"
 
 namespace SummerDB {
@@ -13,22 +14,25 @@ class PhysicalOrder : public PhysicalOperator {
       : PhysicalOperator(PhysicalOperatorType::ORDER_BY),
         description(std::move(description)) {}
 
-  virtual void InitializeChunk(DataChunk& chunk) override;
-  virtual void GetChunk(DataChunk& chunk,
-                        PhysicalOperatorState* state) override;
+  std::vector<TypeId> GetTypes() override;
+  virtual void _GetChunk(ClientContext& context, DataChunk& chunk,
+                         PhysicalOperatorState* state) override;
 
-  virtual std::unique_ptr<PhysicalOperatorState> GetOperatorState() override;
+  virtual std::unique_ptr<PhysicalOperatorState> GetOperatorState(
+      ExpressionExecutor* parent_executor) override;
 
   OrderByDescription description;
 };
 
 class PhysicalOrderOperatorState : public PhysicalOperatorState {
  public:
-  PhysicalOrderOperatorState(PhysicalOperator* child)
-      : PhysicalOperatorState(child), position(0) {}
+  PhysicalOrderOperatorState(PhysicalOperator* child,
+                             ExpressionExecutor* parent_executor)
+      : PhysicalOperatorState(child, parent_executor), position(0) {}
 
   size_t position;
-  DataChunk sorted_data;
+  ChunkCollection sorted_data;
+  std::unique_ptr<uint64_t[]> sorted_vector;
 };
 
 }  // namespace SummerDB
