@@ -4,18 +4,22 @@
 #include <string>
 #include <vector>
 
-#include "SummerDB/Catalog/Catalog.hpp"
-#include "SummerDB/Parser/Statement/SqlStatement.hpp"
+#include "SummerDB/Parser/SqlStatement.hpp"
 #include "SummerDB/Planner/BindContext.hpp"
 #include "SummerDB/Planner/LogicalOperator.hpp"
 
 namespace SummerDB {
 
+class ClientContext;
+
+class ClientContext;
+
 //! The planner creates a logical query plan from the parsed SQL statements
 //! using the Binder and LogicalPlanGenerator.
 class Planner {
  public:
-  bool CreatePlan(Catalog& catalog, std::unique_ptr<SQLStatement> statement);
+  bool CreatePlan(ClientContext& catalog,
+                  std::unique_ptr<SQLStatement> statement);
 
   bool GetSuccess() const { return success; }
   const std::string& GetErrorMessage() const { return message; }
@@ -27,7 +31,7 @@ class Planner {
   std::unique_ptr<LogicalOperator> plan;
 
  private:
-  void CreatePlan(Catalog&, SQLStatement& statement);
+  void CreatePlan(ClientContext&, SQLStatement& statement);
 };
 
 }  // namespace SummerDB

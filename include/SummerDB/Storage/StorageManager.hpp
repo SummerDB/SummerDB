@@ -5,18 +5,35 @@
 
 #include "SummerDB/Common/Helper.hpp"
 #include "SummerDB/Storage/DataTable.hpp"
+#include "SummerDB/Storage/WriteAheadLog.hpp"
 
 namespace SummerDB {
+
+class Catalog;
+class SummerDB;
+class TransactionManager;
 
 //! StorageManager is responsible for managing the physical storage of the
 //! database on disk
 class StorageManager {
  public:
-  //! Create a new table from a catalog entry
-  void CreateTable(TableCatalogEntry& table);
+  StorageManager(SummerDB& database, std::string path);
+  //! Initialize a database or load an existing database from the given path
+  void Initialize();
+  //! Get the WAL of the StorageManager, returns nullptr if in-memory
+  WriteAheadLog* GetWriteAheadLog() {
+    return wal.IsInitialized() ? &wal : nullptr;
+  }
 
-  //! The set of tables managed by the storage engine
-  std::vector<std::unique_ptr<DataTable>> tables;
+ private:
+  void LoadDatabase(std::string& path);
+
+  //! The path of the database
+  std::string path;
+  //! The database this storagemanager belongs to
+  SummerDB& database;
+  //! The WriteAheadLog of the storage manager
+  WriteAheadLog wal;
 };
 
 }  // namespace SummerDB
