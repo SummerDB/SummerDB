@@ -32,7 +32,7 @@ class StringUtil {
   /**
    * Repeat a string multiple times
    */
-  static std::string Repeat(const std::string& str, std::size_t n);
+  static std::string Repeat(const std::string& str, const std::size_t n);
 
   /**
    * Split the input string based on newline char
@@ -57,7 +57,7 @@ class StringUtil {
    * kilobyte, megabyte, gigabyte representation.
    * http://ubuntuforums.org/showpost.php?p=10215516&postcount=5
    */
-  static std::string FormatSize(int64_t bytes);
+  static std::string FormatSize(long bytes);
 
   /**
    * Wrap the given string with the control characters
@@ -79,8 +79,8 @@ class StringUtil {
    * Format a string using printf semantics
    * http://stackoverflow.com/a/8098080
    */
-  static std::string Format(std::string fmt_str, ...);
-  static std::string VFormat(std::string fmt_str, va_list ap);
+  static std::string Format(const std::string fmt_str, ...);
+  static std::string VFormat(const std::string fmt_str, va_list ap);
 
   /**
    * Split the input string into a vector of strings based on
@@ -97,7 +97,7 @@ class StringUtil {
    */
   static void RTrim(std::string& str);
 
-  static std::string Indent(int num_indent);
+  static std::string Indent(const int num_indent);
 
   /**
    * Return a new string that has stripped all occurrences of the provided
@@ -114,9 +114,9 @@ class StringUtil {
 
   static std::string Replace(std::string source, const std::string& from,
                              const std::string& to) {
-    if (from.empty()) {
+    if (from.empty())
       return source;
-    }
+    ;
     size_t start_pos = 0;
     while ((start_pos = source.find(from, start_pos)) != std::string::npos) {
       source.replace(start_pos, from.length(), to);
@@ -126,6 +126,7 @@ class StringUtil {
     return source;
   }
 };
+
 }  // namespace SummerDB
 
 #endif  // SUMMERDB_COMMON_STRING_UTIL_HPP

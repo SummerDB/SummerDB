@@ -1,11 +1,12 @@
 #include "SummerDB/Common/StringUtil.hpp"
 
+#include <stdarg.h>
+#include <string.h>
+
 #include <algorithm>
 #include <iomanip>
 #include <memory>
 #include <sstream>
-#include <stdarg.h>
-#include <string.h>
 #include <string>
 
 namespace SummerDB {
@@ -13,17 +14,6 @@ namespace SummerDB {
 bool StringUtil::Contains(const std::string& haystack,
                           const std::string& needle) {
   return (haystack.find(needle) != std::string::npos);
-}
-
-bool StringUtil::StartsWith(const std::string& str, const std::string& prefix) {
-  return std::equal(prefix.begin(), prefix.end(), str.begin());
-}
-
-bool StringUtil::EndsWith(const std::string& str, const std::string& suffix) {
-  if (suffix.size() > str.size()) {
-    return (false);
-  }
-  return std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
 }
 
 /*
@@ -38,6 +28,16 @@ void StringUtil::RTrim(std::string& str) {
 
 std::string StringUtil::Indent(int num_indent) {
   return std::string(num_indent, ' ');
+}
+
+bool StringUtil::StartsWith(const std::string& str, const std::string& prefix) {
+  return std::equal(prefix.begin(), prefix.end(), str.begin());
+}
+
+bool StringUtil::EndsWith(const std::string& str, const std::string& suffix) {
+  if (suffix.size() > str.size())
+    return (false);
+  return std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
 }
 
 std::string StringUtil::Repeat(const std::string& str, const std::size_t n) {
