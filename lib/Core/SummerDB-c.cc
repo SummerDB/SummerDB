@@ -39,67 +39,67 @@ summerdb_state summerdb_disconnect(summerdb_connection connection) {
 static summerdb_type _convert_type_cpp_to_c(TypeId type) {
   switch (type) {
     case TypeId::PARAMETER_OFFSET:
-      return DUCKDB_TYPE_PARAMETER_OFFSET;
+      return SUMMERDB_TYPE_PARAMETER_OFFSET;
     case TypeId::BOOLEAN:
-      return DUCKDB_TYPE_BOOLEAN;
+      return SUMMERDB_TYPE_BOOLEAN;
     case TypeId::TINYINT:
-      return DUCKDB_TYPE_TINYINT;
+      return SUMMERDB_TYPE_TINYINT;
     case TypeId::SMALLINT:
-      return DUCKDB_TYPE_SMALLINT;
+      return SUMMERDB_TYPE_SMALLINT;
     case TypeId::INTEGER:
-      return DUCKDB_TYPE_INTEGER;
+      return SUMMERDB_TYPE_INTEGER;
     case TypeId::BIGINT:
-      return DUCKDB_TYPE_BIGINT;
+      return SUMMERDB_TYPE_BIGINT;
     case TypeId::DECIMAL:
-      return DUCKDB_TYPE_DECIMAL;
+      return SUMMERDB_TYPE_DECIMAL;
     case TypeId::POINTER:
-      return DUCKDB_TYPE_POINTER;
+      return SUMMERDB_TYPE_POINTER;
     case TypeId::TIMESTAMP:
-      return DUCKDB_TYPE_TIMESTAMP;
+      return SUMMERDB_TYPE_TIMESTAMP;
     case TypeId::DATE:
-      return DUCKDB_TYPE_DATE;
+      return SUMMERDB_TYPE_DATE;
     case TypeId::VARCHAR:
-      return DUCKDB_TYPE_VARCHAR;
+      return SUMMERDB_TYPE_VARCHAR;
     case TypeId::VARBINARY:
-      return DUCKDB_TYPE_VARBINARY;
+      return SUMMERDB_TYPE_VARBINARY;
     case TypeId::ARRAY:
-      return DUCKDB_TYPE_ARRAY;
+      return SUMMERDB_TYPE_ARRAY;
     case TypeId::UDT:
-      return DUCKDB_TYPE_UDT;
+      return SUMMERDB_TYPE_UDT;
     default:
-      return DUCKDB_TYPE_INVALID;
+      return SUMMERDB_TYPE_INVALID;
   }
 }
 
 static TypeId _convert_type_c_to_cpp(summerdb_type type) {
   switch (type) {
-    case DUCKDB_TYPE_PARAMETER_OFFSET:
+    case SUMMERDB_TYPE_PARAMETER_OFFSET:
       return TypeId::PARAMETER_OFFSET;
-    case DUCKDB_TYPE_BOOLEAN:
+    case SUMMERDB_TYPE_BOOLEAN:
       return TypeId::BOOLEAN;
-    case DUCKDB_TYPE_TINYINT:
+    case SUMMERDB_TYPE_TINYINT:
       return TypeId::TINYINT;
-    case DUCKDB_TYPE_SMALLINT:
+    case SUMMERDB_TYPE_SMALLINT:
       return TypeId::SMALLINT;
-    case DUCKDB_TYPE_INTEGER:
+    case SUMMERDB_TYPE_INTEGER:
       return TypeId::INTEGER;
-    case DUCKDB_TYPE_BIGINT:
+    case SUMMERDB_TYPE_BIGINT:
       return TypeId::BIGINT;
-    case DUCKDB_TYPE_DECIMAL:
+    case SUMMERDB_TYPE_DECIMAL:
       return TypeId::DECIMAL;
-    case DUCKDB_TYPE_POINTER:
+    case SUMMERDB_TYPE_POINTER:
       return TypeId::POINTER;
-    case DUCKDB_TYPE_TIMESTAMP:
+    case SUMMERDB_TYPE_TIMESTAMP:
       return TypeId::TIMESTAMP;
-    case DUCKDB_TYPE_DATE:
+    case SUMMERDB_TYPE_DATE:
       return TypeId::DATE;
-    case DUCKDB_TYPE_VARCHAR:
+    case SUMMERDB_TYPE_VARCHAR:
       return TypeId::VARCHAR;
-    case DUCKDB_TYPE_VARBINARY:
+    case SUMMERDB_TYPE_VARBINARY:
       return TypeId::VARBINARY;
-    case DUCKDB_TYPE_ARRAY:
+    case SUMMERDB_TYPE_ARRAY:
       return TypeId::ARRAY;
-    case DUCKDB_TYPE_UDT:
+    case SUMMERDB_TYPE_UDT:
       return TypeId::UDT;
     default:
       return TypeId::INVALID;
@@ -114,23 +114,23 @@ T get_value(summerdb_column column, size_t index) {
 
 static Value _summerdb_c_get_value(summerdb_column column, size_t index) {
   switch (column.type) {
-    case DUCKDB_TYPE_BOOLEAN:
+    case SUMMERDB_TYPE_BOOLEAN:
       return Value::BOOLEAN(get_value<int8_t>(column, index));
-    case DUCKDB_TYPE_TINYINT:
+    case SUMMERDB_TYPE_TINYINT:
       return Value::TINYINT(get_value<int8_t>(column, index));
-    case DUCKDB_TYPE_SMALLINT:
+    case SUMMERDB_TYPE_SMALLINT:
       return Value::SMALLINT(get_value<int16_t>(column, index));
-    case DUCKDB_TYPE_INTEGER:
+    case SUMMERDB_TYPE_INTEGER:
       return Value::INTEGER(get_value<int32_t>(column, index));
-    case DUCKDB_TYPE_BIGINT:
+    case SUMMERDB_TYPE_BIGINT:
       return Value::BIGINT(get_value<int64_t>(column, index));
-    case DUCKDB_TYPE_DECIMAL:
+    case SUMMERDB_TYPE_DECIMAL:
       return Value(get_value<double>(column, index));
-    case DUCKDB_TYPE_POINTER:
+    case SUMMERDB_TYPE_POINTER:
       return Value::POINTER(get_value<uint64_t>(column, index));
-    case DUCKDB_TYPE_DATE:
+    case SUMMERDB_TYPE_DATE:
       return Value::DATE(get_value<date_t>(column, index));
-    case DUCKDB_TYPE_VARCHAR:
+    case SUMMERDB_TYPE_VARCHAR:
       return Value(std::string(get_value<char*>(column, index)));
     default:
       throw std::runtime_error("Invalid value for C to C++ conversion!");
@@ -262,7 +262,7 @@ void summerdb_destroy_result(summerdb_result result) {
   if (result.columns) {
     for (size_t i = 0; i < result.column_count; i++) {
       auto& column = result.columns[i];
-      if (column.type >= DUCKDB_TYPE_VARCHAR) {
+      if (column.type >= SUMMERDB_TYPE_VARCHAR) {
         // variable length size: delete individual elements
         void** dataptr = (void**)column.data;
         for (size_t j = 0; j < result.row_count; j++) {
