@@ -31,7 +31,7 @@ class QueryProfiler : public Printable {
   };
 
  private:
-  static size_t GetDepth(QueryProfiler::TreeNode& node);
+  static size_t GetDepth(TreeNode& node);
   std::unique_ptr<TreeNode> CreateTree(PhysicalOperator* root,
                                        size_t depth = 0);
 

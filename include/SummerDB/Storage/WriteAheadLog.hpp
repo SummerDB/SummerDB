@@ -16,7 +16,7 @@ class TableCatalogEntry;
 class Transaction;
 class TransactionManager;
 
-#define WAL_FILE "duckdb.wal"
+#define WAL_FILE "summerdb.wal"
 
 //! The type of WAL entry
 typedef uint8_t wal_type_t;

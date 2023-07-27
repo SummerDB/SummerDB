@@ -117,7 +117,7 @@ static std::string DrawPadded(std::string text, int remaining_width) {
          std::string(right_padding, ' ') + "|";
 }
 
-size_t QueryProfiler::RenderTreeRecursive(QueryProfiler::TreeNode& node,
+size_t QueryProfiler::RenderTreeRecursive(TreeNode& node,
                                           std::vector<std::string>& render,
                                           size_t base_render_x) {
   size_t width = base_render_x;
@@ -166,7 +166,7 @@ size_t QueryProfiler::RenderTreeRecursive(QueryProfiler::TreeNode& node,
   return width;
 }
 
-size_t QueryProfiler::GetDepth(QueryProfiler::TreeNode& node) {
+size_t QueryProfiler::GetDepth(TreeNode& node) {
   size_t depth = 0;
   for (auto& child : node.children) {
     depth = std::max(depth, GetDepth(*child));
@@ -174,7 +174,7 @@ size_t QueryProfiler::GetDepth(QueryProfiler::TreeNode& node) {
   return depth + 1;
 }
 
-std::string QueryProfiler::RenderTree(QueryProfiler::TreeNode& node) {
+std::string QueryProfiler::RenderTree(TreeNode& node) {
   std::vector<std::string> render;
   render.resize(GetDepth(node) * TREE_RENDER_HEIGHT);
   RenderTreeRecursive(node, render, 0);
